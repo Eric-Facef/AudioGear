@@ -1,0 +1,475 @@
+
+:root {
+    --bg-color: #0d0d0d;
+    --card-bg: rgba(22, 22, 22, 0.88);
+    --neon-green: #a3ff00;
+    --text-gray: #b0b0b0;
+    --border-color: #2d2d2d;
+}
+
+body {
+    background-color: var(--bg-color);
+    /* 🚗 Imagem de fundo cobrindo a tela inteira perfeitamente */
+    background-image: url(fundo-carro.png); 
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover; 
+    background-attachment: fixed; /* Efeito parallax ao rolar a página */
+    background-blend-mode: overlay;
+    
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 10px 20px 100px 20px; /* Recuo para o menu fixo inferior */
+}
+
+.container {
+    position: relative;
+    z-index: 2;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+header h1 { 
+    text-align: center; 
+    letter-spacing: 2px; 
+    font-size: 1.4rem; 
+    margin-top: 15px;
+    text-shadow: 0 0 10px rgba(163, 255, 0, 0.3);
+}
+
+.aba-conteudo { display: none; }
+.aba-conteudo.ativa { display: block; }
+
+/* ---------------- GRID DO CÁLCULO ---------------- */
+.grid-setup {
+    display: grid;
+    grid-template-columns: 1fr 340px 1fr;
+    gap: 30px;
+    margin: 25px auto;
+    align-items: start;
+    position: relative; /* Base de ancoragem para as ondas */
+}
+
+.card-selection {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    backdrop-filter: blur(6px);
+    position: relative;
+    z-index: 3; /* Garante que fica acima das linhas conectoras */
+}
+
+/* ↕️ TRAVA DE 4 COMPONENTES COM SCROLLBAR */
+.list-container {
+    max-height: 290px; /* Altura ideal calculada para renderizar 4 itens */
+    overflow-y: auto;  /* Ativa rolagem vertical automaticamente */
+    padding-right: 5px;
+}
+
+/* Estilização da Barra de Rolagem no estilo Dark/Neon */
+.list-container::-webkit-scrollbar {
+    width: 6px;
+}
+.list-container::-webkit-scrollbar-track {
+    background: #141414;
+    border-radius: 10px;
+}
+.list-container::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 10px;
+}
+.list-container::-webkit-scrollbar-thumb:hover {
+    background: var(--neon-green);
+}
+
+.card-header h2 { font-size: 1rem; margin: 0; letter-spacing: 1px; }
+.step-number { color: var(--neon-green); font-weight: bold; margin-right: 8px; }
+
+.search-box input {
+    width: 100%;
+    background: #1f1f1f;
+    border: 1px solid #3d3d3d;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: white;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+.search-box input:focus { 
+    outline: none; 
+    border-color: var(--neon-green); 
+    box-shadow: 0 0 8px rgba(163, 255, 0, 0.4);
+}
+
+.item-option {
+    border: 1px solid var(--border-color);
+    padding: 12px 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+    background: rgba(18, 18, 18, 0.6);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.radio-circle { width: 14px; height: 14px; border: 2px solid #555; border-radius: 50%; position: relative; flex-shrink: 0; }
+.item-option:hover { background: rgba(30, 30, 30, 0.5); border-color: #555; }
+
+/* Estado Selecionado com a bolinha neon por dentro */
+.item-option.selected { border-color: var(--neon-green); background: rgba(22, 22, 22, 0.9); box-shadow: 0 0 12px rgba(163, 255, 0, 0.15); }
+.item-option.selected .radio-circle { border-color: var(--neon-green); }
+.item-option.selected .radio-circle::after {
+    content: ""; width: 8px; height: 8px; background: var(--neon-green); border-radius: 50%;
+    position: absolute; top: 3px; left: 3px;
+}
+
+.item-details-neon { color: var(--neon-green); font-size: 0.8rem; margin-top: 3px; display: block; }
+
+/*botao casamento*/
+/* 🎛️ O Contêiner que envolve o botão */
+.action-container {
+    background: rgba(22, 22, 22, 0.95) !important;
+    border: 1px solid #3d3d3d !important;
+    border-radius: 12px !important;
+    padding: 15px 12px !important;
+    margin: 20px auto !important;
+    width: 280px !important; /* Aumentei um pouco para o texto caber folgado */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5) !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+}
+
+/* Texto de dica acima do botão */
+.action-tip {
+    color: #888888 !important;
+    font-size: 0.75rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    margin: 0 0 10px 0 !important;
+}
+
+/* ⚡ ESTADO NORMAL DO BOTÃO (Antes de passar o mouse) */
+#btn-verificar {
+    background: #1f1f1f !important;
+    color: #ffffff !important; /* Texto branco no fundo escuro */
+    border: 1px solid #3d3d3d !important;
+    
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 12px 5px !important; /* Espaçamento interno vertical */
+    border-radius: 8px !important;
+    
+    font-size: 0.72rem !important; /* Tamanho cirúrgico para caber na linha */
+    font-weight: bold !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+    cursor: pointer !important;
+    
+    display: block !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+/* 🔥 O HOVER (Quando o mouse passa por cima - CORRIGIDO) */
+#btn-verificar:hover {
+    background: #a3ff00 !important;   /* Fundo fica Verde Neon */
+    color: #000000 !important;        /* COR DA FONTE MUDA PARA PRETO (Dá contraste total) */
+    border-color: #a3ff00 !important;  /* Borda acompanha o verde */
+    box-shadow: 0 0 15px rgba(163, 255, 0, 0.6) !important; /* Brilho neon em volta */
+}
+
+/* Efeito físico de clique */
+#btn-verificar:active {
+    transform: scale(0.97) !important;
+}
+
+/* mensagem de impedancia */
+/* 🟢 SUCESSO: Fundo Verde Sólido */
+.painel-sucesso {
+    background-color: #a3ff00 !important; /* Verde Neon Sólido */
+    border: none !important;
+    box-shadow: 0 10px 30px rgba(163, 255, 0, 0.4) !important;
+}
+.painel-sucesso h4, .painel-sucesso p {
+    color: #000000 !important; /* Texto Preto para contraste total */
+}
+
+/* 🟡 ALERTA: Fundo Amarelo Sólido */
+.painel-alerta {
+    background-color: #ffeb3b !important; /* Amarelo Sólido */
+    border: none !important;
+    box-shadow: 0 10px 30px rgba(255, 235, 59, 0.4) !important;
+}
+.painel-alerta h4, .painel-alerta p {
+    color: #000000 !important; /* Texto Preto para contraste total */
+}
+
+/* 🔴 PERIGO: Fundo Vermelho Sólido */
+.painel-perigo {
+    background-color: #f44336 !important; /* Vermelho Sólido */
+    border: none !important;
+    box-shadow: 0 10px 30px rgba(244, 67, 54, 0.4) !important;
+}
+.painel-perigo h4, .painel-perigo p {
+    color: #ffffff !important; /* Texto Branco para contraste total */
+}
+
+/* ---------------- COLUNA CENTRAL DO RAIO ---------------- */
+.visual-bridge { 
+    text-align: center; 
+    padding-top: 20px;
+    position: static; /* Necessário para liberar o cálculo absoluto dos filhos */
+}
+
+.neon-circle {
+    width: 90px; height: 90px; border: 3px solid var(--neon-green); border-radius: 50%;
+    display: flex; justify-content: center; align-items: center; margin: 0 auto;
+    box-shadow: 0 0 25px var(--neon-green), inset 0 0 15px rgba(163, 255, 0, 0.2); 
+    background: rgba(13, 13, 13, 0.9);
+    position: relative;
+    z-index: 4;
+}
+
+/* 🌊 ONDINHAS ELÉTRICAS CONECTADAS E GRUDADAS NAS COLUNAS */
+.grid-setup::before, .grid-setup::after {
+    content: "";
+    position: absolute;
+    top: 65px; /* Alinhamento centralizado perfeito no eixo Y do raio */
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
+    background-size: 200% 100%;
+    z-index: 1;
+}
+
+/* Onda da Esquerda: Gruda perfeitamente na parede interna do card do Módulo */
+.grid-setup::before {
+    left: calc(33.33% - 130px);
+    width: calc(16.66% + 90px);
+    animation: pulsoOnda 2s infinite linear;
+}
+
+/* Onda da Direita: Gruda perfeitamente na parede interna do card do Alto-falante */
+.grid-setup::after {
+    right: calc(33.33% - 130px);
+    width: calc(16.66% + 90px);
+    animation: pulsoOnda 2s infinite linear reverse;
+}
+
+/* Efeito pulsante correndo pelas fiações virtuais */
+@keyframes pulsoOnda {
+    0% { background-position: 200% 0; opacity: 0.3; }
+    50% { opacity: 1; }
+    100% { background-position: -200% 0; opacity: 0.3; }
+}
+
+#btn-verificar {
+    background: none; border: none; color: white; cursor: pointer; margin-top: 15px; margin-bottom: 20px;
+    font-size: 0.8rem; font-weight: bold; border-bottom: 1px dashed var(--neon-green); padding-bottom: 4px;
+    position: relative; z-index: 4; transition: 0.2s;
+}
+#btn-verificar:hover { color: var(--neon-green); text-shadow: 0 0 8px var(--neon-green); }
+
+/* Painel Amarelo de Resultado Centralizado */
+.result-box { 
+    background: #e0ff4f; color: black; padding: 15px; border-radius: 12px; 
+    box-shadow: 0 8px 25px rgba(0,0,0,0.6); text-align: left; width: 100%; box-sizing: border-box;
+    animation: surgir 0.3s ease-out;
+}
+@keyframes surgir {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.result-content strong { font-size: 1rem; letter-spacing: 1px; display: block; margin-bottom: 5px; }
+.result-content p { margin: 0; font-size: 0.8rem; line-height: 1.4; color: #1a1a1a; }
+
+/* ---------------- TELA DO CATÁLOGO ---------------- */
+.catalogo-container { 
+    background: var(--card-bg); 
+    border-radius: 15px; 
+    padding: 25px; 
+    border: 1px solid var(--border-color); 
+    margin-top: 20px; 
+    backdrop-filter: blur(6px); 
+    overflow-x: auto; /* Permite rolagem horizontal na tabela se a tela for muito pequena */
+}
+.catalogo-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.tabela-produtos { width: 100%; border-collapse: collapse; text-align: left; min-width: 600px; }
+.tabela-produtos th, .tabela-produtos td { padding: 12px 15px; border-bottom: 1px solid var(--border-color); }
+.tabela-produtos th { color: var(--neon-green); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+
+.btn-acao { padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; font-size: 0.8rem; margin-right: 5px; white-space: nowrap; transition: 0.2s; }
+.btn-acao:hover { opacity: 0.85; }
+.btn-editar { background: #2196F3; color: white; }
+.btn-deletar { background: #f44336; color: white; }
+
+/* ---------------- MENU INFERIOR FIXO ---------------- */
+.menu-inferior { position: fixed; bottom: 0; left: 0; right: 0; background: #111; border-top: 1px solid var(--border-color); display: flex; justify-content: center; gap: 60px; padding: 15px; z-index: 10; }
+.btn-menu { background: none; border: none; color: var(--text-gray); font-size: 0.9rem; font-weight: bold; cursor: pointer; padding: 5px 10px; transition: 0.2s; }
+.btn-menu.ativo { color: var(--neon-green); border-bottom: 2px solid var(--neon-green); }
+
+
+/* ==========================================================================
+   📱 💻 DISPOSITIVOS MÓVEIS (RESPONSIVIDADE COMPLETA)
+   ========================================================================== */
+
+/* Tablets e Telas Médias (Até 1024px) */
+@media (max-width: 1024px) {
+    .grid-setup {
+        grid-template-columns: 1fr 280px 1fr;
+        gap: 15px;
+    }
+    .grid-setup::before { left: calc(33.33% - 100px); width: calc(16.66% + 65px); }
+    .grid-setup::after { right: calc(33.33% - 100px); width: calc(16.66% + 65px); }
+}
+
+/* Smartphones (Até 768px) - Empilhamento de Colunas */
+@media (max-width: 768px) {
+    body {
+        padding-bottom: 120px; /* Evita que o menu de abas tampe o conteúdo */
+    }
+
+    /* O grid que era de 3 colunas horizontais passa a ser uma linha vertical única */
+    .grid-setup {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+
+    /* Move a seção central para ficar inteligentemente posicionada entre as duas listas */
+    .visual-bridge {
+        grid-row: 2; 
+        padding-top: 10px;
+    }
+
+    /* Esconde as ondas elétricas horizontais no celular (já que não há mais caixas nas laterais) */
+    .grid-setup::before, .grid-setup::after {
+        display: none;
+    }
+
+    .neon-circle {
+        width: 80px;
+        height: 80px;
+    }
+
+    .menu-inferior {
+        gap: 30px; /* Aproxima as abas para caber perfeitamente na largura do celular */
+    }
+    
+    .catalogo-container {
+        padding: 15px;
+    }
+}
+/* ---------------- STYLES DO MODAL PREMIUM ---------------- */
+/* ---------------- STYLES DO MODAL GREEN-NEON ---------------- */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    display: none; 
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-box {
+    background: #161616; /* Casando com o fundo dos seus cards */
+    border: 2px solid var(--neon-green); /* Mudado para o seu Verde Neon */
+    border-radius: 12px;
+    padding: 25px;
+    width: 450px;
+    max-width: 90%;
+    box-shadow: 0 0 25px rgba(163, 255, 0, 0.2);
+    animation: abrirModal 0.25s ease-out;
+}
+
+@keyframes abrirModal {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.modal-box h3 { 
+    margin-top: 0; 
+    margin-bottom: 20px;
+    color: #fff; 
+    font-size: 1.2rem; 
+    letter-spacing: 1px;
+    border-bottom: 1px solid #2d2d2d;
+    padding-bottom: 10px;
+}
+
+.form-group { margin-bottom: 15px; }
+.form-row { display: flex; gap: 15px; }
+.form-row .form-group { flex: 1; }
+
+.modal-box label { 
+    color: #b0b0b0; 
+    display: block; 
+    margin-bottom: 6px; 
+    font-size: 0.85rem; 
+    font-weight: 600;
+}
+
+.modal-box input {
+    width: 100%;
+    background: #1f1f1f;
+    border: 1px solid #3d3d3d;
+    padding: 10px 12px;
+    border-radius: 6px;
+    color: white;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+    transition: 0.2s;
+}
+
+.modal-box input:focus { 
+    outline: none; 
+    border-color: var(--neon-green); 
+    box-shadow: 0 0 8px rgba(163, 255, 0, 0.4);
+}
+
+.modal-footer { 
+    display: flex; 
+    justify-content: flex-end; 
+    gap: 12px; 
+    margin-top: 25px; 
+    border-top: 1px solid #2d2d2d;
+    padding-top: 15px;
+}
+
+.btn-modal { 
+    padding: 10px 22px; 
+    border: none; 
+    border-radius: 6px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    font-size: 0.85rem;
+    transition: 0.2s;
+}
+
+.btn-modal:hover { opacity: 0.9; }
+.btn-modal.cxl { background: #2d2d2d; color: white; }
+.btn-modal.ok { background: var(--neon-green); color: black; } /* Botão OK Verde */
+/* Variação de perigo para o modal de deletar */
+.modal-box.border-vermelho {
+    border-color: #f44336;
+    box-shadow: 0 0 25px rgba(244, 67, 54, 0.2);
+}
+
+.texto-vermelho {
+    color: #f44336 !important;
+}
+
+.btn-perigo {
+    background: #f44336;
+    color: white;
+}
+
+.modal-body p {
+    color: #e0e0e0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 10px 0;
+}
