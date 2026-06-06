@@ -1,5 +1,5 @@
-const API_URL = "http://localhost:8080/api/componentes";
-const API_AUTH_URL = "http://localhost:8080/auth";
+const API_URL = "https://audiogear.onrender.com/api/componentes";
+const API_AUTH_URL = "https://audiogear.onrender.com/auth";
 
 let moduloSelecionado = null;
 let falanteSelecionado = null;

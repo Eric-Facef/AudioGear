@@ -1,5 +1,5 @@
 // URL base da sua API Java
-const API_AUTH_URL = 'http://localhost:8080/auth';
+const API_AUTH_URL = 'https://audiogear.onrender.com/auth';
 
 // Roda automaticamente assim que a página abre
 document.addEventListener("DOMContentLoaded", () => {
