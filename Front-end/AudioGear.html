@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AudioGear - Sistema Completo</title>
+    <link rel="stylesheet" href="AudioGear.css">
+</head>
+<body>
+
+    <div class="container-usuario-topo">
+        <button id="btn-usuario-topo" class="btn-usuario-circular" onclick="redirecionarOuDeslogar()">
+            <div class="icone-silhueta">
+                <div class="silhueta-cabeca"></div>
+                <div class="silhueta-corpo"></div>
+            </div>
+        </button>
+        <span id="label-usuario-topo" class="label-usuario-texto">Login Admin</span>
+    </div>
+
+    <div class="container">
+
+        <!-- ==========================================================================
+            ABA CÁLCULO (SPA)
+        ========================================================================== -->
+        <div id="aba-calculo" class="aba-conteudo ativa">
+            <header>
+                <h1>VERIFICADOR DE SETUP DE SOM</h1>
+            </header>
+
+            <main class="grid-setup">
+                <!-- Seção 1: Módulo -->
+                <section class="card-selection" id="modulo-section">
+                    <div class="card-header">
+                        <span class="step-number">1.</span>
+                        <h2>SELECIONE O MÓDULO</h2>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" id="busca-modulo" placeholder="Buscar módulo...">
+                    </div>
+                    <div class="list-container" id="lista-modulos"></div>
+                </section>
+
+                <!-- Seção Central: Ação e Modal de Resultado Integrado -->
+                <section class="visual-bridge">
+                    <div class="onda-neon-container">
+                        <div class="onda-linha-fundo"></div>
+                        <div class="onda-pulso-neon"></div>
+                        <div class="neon-circle">
+                            <img src="https://img.icons8.com/ios-filled/40/a3ff00/lightning-bolt.png" alt="Link icon">
+                        </div>
+                    </div>
+                    <div class="action-container">
+                        <p class="action-tip">Pronto para o teste?</p>
+                        
+                        <!-- MODAL DE DIAGNÓSTICO INTEGRADO (Posicionado estrategicamente aqui) -->
+                        <div id="modal-resultado-setup" class="modal-setup-overlay" style="display: none;">
+                            <div class="modal-setup-card" id="modal-resultado-card">
+                                <div class="modal-setup-header">
+                                    <span id="modal-resultado-icone">🟢</span>
+                                    <h2 id="modal-resultado-titulo">CASAMENTO PERFEITO</h2>
+                                </div>
+                                <hr class="modal-setup-divisor">
+                                <div class="modal-setup-body">
+                                    <p id="modal-resultado-mensagem">O setup está equilibrado.</p>
+                                </div>
+                                <button type="button" class="btn-modal-setup-fechar" onclick="fecharModalResultado()">Fechar Diagnóstico</button>
+                            </div>
+                        </div>
+
+                        <button type="button" id="btn-verificar">VERIFICAR CASAMENTO DE SOM</button>
+                    </div>
+                </section>
+
+                <!-- Seção 2: Falante e Configurações de Ligação -->
+                <section class="card-selection" id="falante-section">
+                    <div class="card-header">
+                        <span class="step-number">2.</span>
+                        <h2>SELECIONE O FALANTE</h2>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" id="busca-falante" placeholder="Buscar alto-falante...">
+                    </div>
+                    <div class="list-container" id="lista-falantes"></div>
+                    
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <div style="flex: 1;">
+                            <label for="qtd-falantes" style="font-size: 0.8rem; color: var(--text-gray); display: block; margin-bottom: 5px;">Quantidade:</label>
+                            <input type="number" id="qtd-falantes" min="1" value="1" class="input-automotivo" style="padding: 8px;">
+                        </div>
+                        <div style="flex: 1;">
+                            <label for="tipo-ligacao" style="font-size: 0.8rem; color: var(--text-gray); display: block; margin-bottom: 5px;">Ligação:</label>
+                            <select id="tipo-ligacao" class="input-automotivo" style="padding: 8px; background-color: #0f0f0f; color: white; border: 1px solid var(--border-color); width: 100%; border-radius: 4px; outline: none;">
+                                <option value="paralelo">Paralelo (Padrão)</option>
+                                <option value="serie">Série</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- ==========================================================================
+            ABA CATÁLOGO (SPA)
+        ========================================================================== -->
+        <div id="aba-catalogo" class="aba-conteudo">
+            <header>
+                <h1>PRODUTOS CADASTRADOS</h1>
+            </header>
+
+            <div class="catalogo-controles">
+                <div class="busca-grupo">
+                    <input type="text" id="busca-catalogo" placeholder="🔍 Pesquisar por nome ou marca...">
+                </div>
+                <div class="filtros-grupo">
+                    <button class="btn-filtro ativo" id="filtro-todos" onclick="filtrarTipoCatalogo('TODOS')">Todos</button>
+                    <button class="btn-filtro" id="filtro-modulo" onclick="filtrarTipoCatalogo('AMPLIFICADOR')">Módulos</button>
+                    <button class="btn-filtro" id="filtro-falante" onclick="filtrarTipoCatalogo('ALTO_FALANTE')">Alto-Falantes</button>
+                </div>
+                <div class="adicionar-grupo btn-admin-acao">
+                    <button id="btn-abrir-cadastro" class="btn-filtro btn-adicionar" onclick="abrirModalCadastro()">
+                        ➕ Adicionar
+                    </button>
+                </div>
+            </div>
+
+            <main class="catalogo-main">
+                <table class="tabela-produtos">
+                    <thead>
+                        <tr>
+                            <th>NOME</th>
+                            <th>MARCA</th>
+                            <th>TIPO</th>
+                            <th>POTÊNCIA</th>
+                            <th>IMPEDÂNCIA</th>
+                            <th class="btn-admin-acao">AÇÕES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-corpo-produtos"></tbody>
+                </table>
+            </main>
+        </div>
+
+        <!-- ==========================================================================
+            ABA PAINEL ADMIN (SPA)
+        ========================================================================== -->
+        <div id="aba-painel-admin" class="aba-conteudo">
+            <header>
+                <h1>PAINEL DO ADMINISTRADOR</h1>
+            </header>
+
+            <main class="painel-admin-box">
+                <div class="painel-admin-header">
+                    <h3>🎛️ Controle de Acessos e Usuários</h3>
+                    <button onclick="executarLogout()" class="btn-logout">Sair do Sistema</button>
+                </div>
+
+                <div class="painel-admin-grid">
+                    <div class="card-admin-action">
+                        <h4>Cadastrar Novo Admin</h4>
+                        <div class="form-group-admin">
+                            <input type="text" id="new-username" class="input-automotivo" placeholder="Novo Usuário">
+                            <input type="password" id="new-password" class="input-automotivo" placeholder="Nova Senha">
+                            <button onclick="executarCadastroUsuario()" class="btn-acao-admin btn-salvar-admin">Cadastrar</button>
+                        </div>
+                    </div>
+
+                    <div class="card-admin-action">
+                        <h4>Remover Usuário por ID</h4>
+                        <div class="form-group-admin">
+                            <input type="number" id="delete-user-id" class="input-automotivo" placeholder="ID do Usuário">
+                            <button onclick="executarExclusaoUsuario()" class="btn-acao-admin btn-deletar-admin">Deletar</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- ==========================================================================
+            MENU INFERIOR (NAVEGAÇÃO FIXED)
+        ========================================================================== -->
+        <nav class="menu-inferior">
+            <button class="btn-menu ativo" onclick="alternarAba('calculo')">
+                <img src="https://img.icons8.com/ios-filled/24/ffffff/math.png" alt="Cálculo">
+                <span>Cálculo</span>
+            </button>
+            <button class="btn-menu" onclick="alternarAba('catalogo')">
+                <img src="https://img.icons8.com/ios-filled/24/ffffff/audio-wave.png" alt="Catálogo">
+                <span>Catálogo</span>
+            </button>
+            <button id="aba-botao-admin" class="btn-menu btn-admin-acao" onclick="alternarAba('painel-admin')">
+                <img src="https://img.icons8.com/ios-filled/24/ffffff/settings.png" alt="Painel Admin">
+                <span>Painel ADM</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- ==========================================================================
+        MODAIS DO SISTEMA (EDIÇÃO, CADASTRO, DELEÇÃO)
+    ========================================================================== -->
+    
+    <!-- Modal de Edição -->
+    <div id="modal-edicao" class="modal-overlay">
+        <div class="modal-card border-green">
+            <h3>Editar Equipamento</h3>
+            <hr class="modal-divisao">
+            <input type="hidden" id="edit-id">
+            <input type="hidden" id="edit-tipo">
+
+            <div class="form-group">
+                <label>Nome do Componente:</label>
+                <input type="text" id="edit-nome" class="input-automotivo">
+
+                <label>Marca:</label>
+                <input type="text" id="edit-marca" class="input-automotivo">
+
+                <div class="form-row">
+                    <div>
+                        <label>Potência (RMS):</label>
+                        <input type="number" id="edit-potencia" class="input-automotivo">
+                    </div>
+                    <div>
+                        <label>Impedância (Ω):</label>
+                        <input type="number" id="edit-impedancia" class="input-automotivo">
+                    </div>
+                </div>
+
+                <div id="edit-group-canais">
+                    <label>Quantidade de Canais:</label>
+                    <input type="number" id="edit-canais" class="input-automotivo">
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+                <button class="btn-salvar" onclick="salvarAlteracoes()">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Deleção -->
+    <div id="modal-delecao" class="modal-overlay">
+        <div class="modal-card border-red">
+            <h3>Confirmar Exclusão</h3>
+            <hr class="modal-divisao">
+            <p>Tem certeza que deseja excluir o componente <strong id="delete-nome-info" class="text-neon-red"></strong>?</p>
+            <input type="hidden" id="delete-id">
+
+            <div class="modal-actions">
+                <button class="btn-cancelar" onclick="fecharModalDelecao()">Cancelar</button>
+                <button class="btn-deletar" onclick="confirmarExclusaoNoBanco()">Excluir Permanentemente</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Cadastro de Equipamento -->
+    <div id="modal-cadastro-equipamento" class="modal-overlay">
+        <div class="modal-card border-green">
+            <h3>Adicionar Equipamento</h3>
+            <hr class="modal-divisao">
+
+            <div class="form-group">
+                <label>Tipo do Componente:</label>
+                <select id="cad-tipo" class="input-automotivo" onchange="alternarCanaisModalCadastro()">
+                    <option value="ALTO_FALANTE">Alto-Falante</option>
+                    <option value="AMPLIFICADOR">Amplificador (Módulo)</option>
+                </select>
+
+                <label>Nome do Componente:</label>
+                <input type="text" id="cad-nome" class="input-automotivo" placeholder="Ex: Subwoofer Upgrade">
+
+                <label>Marca:</label>
+                <input type="text" id="cad-marca" class="input-automotivo" placeholder="Ex: Bravox">
+
+                <div class="form-row">
+                    <div>
+                        <label>Potência (RMS):</label>
+                        <input type="number" id="cad-potencia" class="input-automotivo" placeholder="Ex: 350">
+                    </div>
+                    <div>
+                        <label>Impedância (Ω):</label>
+                        <input type="number" id="cad-impedancia" class="input-automotivo" placeholder="Ex: 4">
+                    </div>
+                </div>
+
+                <div id="cad-group-canais" class="hidden-fields">
+                    <label>Quantidade de Canais:</label>
+                    <input type="number" id="cad-canais" class="input-automotivo" placeholder="Ex: 4">
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancelar" onclick="fecharModalCadastro()">Cancelar</button>
+                <button class="btn-modal-salvar btn-salvar" onclick="executarCadastroPeloModal(event)">Salvar Componente</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Alerta de Logout -->
+    <div id="modal-logout-alerta" class="modal-logout-overlay">
+        <div class="modal-logout-card">
+            <h3 class="modal-logout-titulo">🚪 LOGOUT</h3>
+            <p class="modal-logout-mensagem">Sessão encerrada com sucesso.<br>Até logo, Admin!</p>
+        </div>
+    </div>
+
+    <!-- Injeção de Script -->
+    <script src="AudioGear.js"></script>
+</body>
+</html>

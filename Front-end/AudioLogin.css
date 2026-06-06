@@ -1,0 +1,249 @@
+/* Reset de estilos padrão */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #0d0f12; /* Fundo grafite bem escuro, padrão de apps de som */
+    background-image: radial-gradient(circle at 50% 50%, #1a1f26 0%, #0d0f12 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Card Central de Login */
+.login-container {
+    background: #161b22;
+    border: 1px solid #21262d;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 420px;
+    padding: 40px 30px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease;
+}
+
+/* Cabeçalho do Card */
+.login-header {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.logo-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #ff0055, #a3ff00);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 15px;
+    box-shadow: 0 0 15px rgba(163, 255, 0, 0.2);
+}
+
+.logo-icon i {
+    color: #0d0f12;
+    font-size: 24px;
+}
+
+.login-header h2 {
+    color: #f0f6fc;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.login-header p {
+    color: #8b949e;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* Grupos de Input */
+.input-group {
+    margin-bottom: 22px;
+}
+
+.input-group label {
+    display: block;
+    color: #c9d1d9;
+    font-size: 14px;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper i {
+    position: absolute;
+    left: 15px;
+    color: #8b949e;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 14px 16px 14px 45px;
+    background-color: #0d0f12;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    color: #c9d1d9;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+/* Efeitos de foco nos inputs */
+.input-wrapper input:focus {
+    border-color: #a3ff00; /* Destaque em verde limão ao focar */
+    box-shadow: 0 0 0 3px rgba(163, 255, 0, 0.15);
+    background-color: #161b22;
+}
+
+.input-wrapper input:focus + i {
+    color: #a3ff00;
+}
+
+/* Customização do Autocomplete do navegador (para sumir com o amarelo feio da foto) */
+.input-wrapper input:-webkit-autofill,
+.input-wrapper input:-webkit-autofill:hover, 
+.input-wrapper input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #c9d1d9;
+    -webkit-box-shadow: 0 0 0px 1000px #0d0f12 inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Botão Entrar */
+.btn-enviar {
+    width: 100%;
+    padding: 14px;
+    background: #a3ff00; /* Botão principal combinando com o sucesso do casamento de som */
+    color: #0d0f12;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.btn-enviar:hover {
+    background: #bcff33;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(163, 255, 0, 0.3);
+}
+
+.btn-enviar:active {
+    transform: translateY(1px);
+}
+
+/* Rodapé do Card / Voltar */
+.login-footer {
+    text-align: center;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #21262d;
+}
+
+.btn-voltar {
+    color: #8b949e;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-voltar:hover {
+    color: #ff0055; /* Destaque sutil em rosa ao passar o mouse */
+}
+
+/* Camada de fundo escura que cobre o ecrã inteiro */
+.modal-login-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px); /* Efeito de vidro desfocado ao fundo */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Caixa interna do Modal */
+.modal-login-card {
+    background: #161b22;
+    border: 2px solid #30363d;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    max-width: 350px;
+    width: 90%;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
+    animation: abrirModalAparecer 0.3s ease-out;
+}
+
+/* Títulos Dinâmicos (Verde para sucesso, Rosa para Erro) */
+#modal-login-titulo {
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+#modal-login-mensagem {
+    color: #c9d1d9;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+/* Botão de Fechar caso o redirecionamento falhe ou dê erro */
+.btn-modal-fechar {
+    background: #21262d;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-modal-fechar:hover {
+    background: #ff0055; /* Rosa Neon ao passar o rato se for erro */
+    color: #fff;
+    border-color: #ff0055;
+    box-shadow: 0 0 10px rgba(255, 0, 85, 0.4);
+}
+
+/* Animação de entrada suave */
+@keyframes abrirModalAparecer {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AudioGear - Login Admin</title>
+    <!-- Link para os ícones nos inputs -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="AudioLogin.css"> <!-- Se for usar CSS separado -->
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-header">
+            <div class="logo-icon">
+                <i class="fa-solid fa-sliders"></i>
+            </div>
+            <h2>Área Restrita</h2>
+            <p>Painel Administrativo AudioGear</p>
+        </div>
+
+        <!-- Altere o onsubmit ou ID para casar com sua função de autenticação se necessário -->
+        <form id="form-login" onsubmit="executarLoginAdmin(event)">
+            <div class="input-group">
+                <label for="username">Usuário</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="username" placeholder="Digite seu usuário" required autocomplete="username">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Senha</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="password" placeholder="Digite sua senha" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-enviar">
+                <span>Entrar</span>
+                <i class="fa-solid fa-right-to-bracket"></i>
+            </button>
+        </form>
+
+        <div class="login-footer">
+            <a href="AudioGear.html" class="btn-voltar"><i class="fa-solid fa-arrow-left"></i> Voltar para o início</a>
+        </div>
+    </div>
+    <script src="AudioLogin.js"></script>
+    <div id="modal-login-alerta" class="modal-login-overlay" style="display: none;">
+        <div class="modal-login-card">
+            <h3 id="modal-login-titulo">⚡ ACESSO LIBERADO</h3>
+            <p id="modal-login-mensagem">Autenticação realizada com sucesso! Redirecionando...</p>
+            <button id="btn-fechar-login-alerta" class="btn-modal-fechar">Fechar</button>
+        </div>
+    </div>
+</body>
+</html>

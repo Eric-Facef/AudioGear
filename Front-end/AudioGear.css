@@ -1,0 +1,959 @@
+:root {
+    --bg-color: #0d0d0d;
+    --card-bg: rgba(22, 22, 22, 0.88);
+    --neon-green: #a3ff00;
+    --neon-red: #ff0055;
+    --text-gray: #b0b0b0;
+    --border-color: #2d2d2d;
+}
+
+/* Evita quebras e rolagem horizontal na tela toda */
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+body {
+    background-color: var(--bg-color);
+    background-image: url(fundo-carro.png); 
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover; 
+    background-attachment: fixed;
+    background-blend-mode: overlay;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 80px 15px 100px 15px; /* Espaço para o botão de perfil fixo e menu inferior */
+    box-sizing: border-box;
+}
+
+/* Garante dimensionamento correto de margens */
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+.container {
+    position: relative;
+    z-index: 2;
+    max-width: 1280px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+header h1 { 
+    text-align: center; 
+    letter-spacing: 2px; 
+    font-size: 1.4rem; 
+    margin-top: 15px;
+    text-shadow: 0 0 10px rgba(163, 255, 0, 0.3);
+}
+
+/* ==========================================================================
+   👤 BOTÃO DE PERFIL INTELIGENTE (CANTO SUPERIOR ESQUERDO)
+   ========================================================================== */
+.container-usuario-topo {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 999;
+}
+
+.btn-usuario-circular {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: #141414;
+    border: 2px solid var(--neon-red);
+    box-shadow: 0 0 8px rgba(255, 0, 85, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.btn-usuario-circular:hover {
+    box-shadow: 0 0 15px var(--neon-red);
+}
+
+.btn-usuario-circular.logado {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 8px rgba(163, 255, 0, 0.3);
+}
+
+.btn-usuario-circular.logado:hover {
+    box-shadow: 0 0 15px var(--neon-green);
+}
+
+.icone-silhueta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    margin-top: 4px;
+}
+
+.silhueta-cabeca {
+    width: 12px;
+    height: 12px;
+    background-color: var(--neon-red);
+    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+
+.silhueta-corpo {
+    width: 22px;
+    height: 14px;
+    background-color: var(--neon-red);
+    border-radius: 10px 10px 0 0;
+    margin-top: 2px;
+    transition: background-color 0.3s;
+}
+
+.btn-usuario-circular.logado .silhueta-cabeca,
+.btn-usuario-circular.logado .silhueta-corpo {
+    background-color: var(--neon-green);
+}
+
+.label-usuario-texto {
+    color: var(--neon-red);
+    font-size: 14px;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(255, 0, 85, 0.3);
+    transition: all 0.3s;
+}
+
+.container-usuario-topo:has(.logado) .label-usuario-texto {
+    color: var(--neon-green);
+    text-shadow: 0 0 5px rgba(163, 255, 0, 0.3);
+}
+
+/* ==========================================================================
+   ⚙️ ESTRUTURA DO SPA (ABAS DE CONTEÚDO)
+   ========================================================================== */
+.aba-conteudo {
+    display: none;
+    animation: fadeInAba 0.4s ease-in-out;
+    width: 100%;
+}
+
+.aba-conteudo.ativa {
+    display: block;
+}
+
+@keyframes fadeInAba {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   🎛️ ABA 3: PAINEL ADMINISTRATIVO RESPONSIVO
+   ========================================================================== */
+.painel-admin-box {
+    background-color: #141414;
+    border: 2px solid var(--neon-red);
+    box-shadow: 0 0 15px rgba(255, 0, 85, 0.2);
+    border-radius: 8px;
+    padding: 25px;
+    margin-top: 20px;
+}
+
+.painel-admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #2d2d2d;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+    gap: 15px;
+}
+
+.painel-admin-header h3 {
+    color: white;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.painel-admin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.card-admin-action {
+    background-color: #1c1c1c;
+    border: 1px solid #2d2d2d;
+    border-radius: 6px;
+    padding: 20px;
+}
+
+.card-admin-action h4 {
+    color: var(--neon-red);
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.form-group-admin {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.btn-logout {
+    background-color: transparent;
+    color: #ff4d4d;
+    border: 1px solid #ff4d4d;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+    white-space: nowrap;
+}
+
+.btn-logout:hover {
+    background-color: #ff4d4d;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(255, 77, 77, 0.4);
+}
+
+.btn-acao-admin {
+    border: none;
+    border-radius: 4px;
+    padding: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-salvar-admin {
+    background-color: var(--neon-green);
+    color: #000;
+}
+
+.btn-salvar-admin:hover {
+    box-shadow: 0 0 12px rgba(163, 255, 0, 0.6);
+}
+
+.btn-deletar-admin {
+    background-color: var(--neon-red);
+    color: #fff;
+}
+
+.btn-deletar-admin:hover {
+    box-shadow: 0 0 12px rgba(255, 0, 85, 0.6);
+}
+
+.hidden-fields {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+}
+
+/* ==========================================================================
+   🚨 MODAL 4: ALERTA DE LOGOUT
+   ========================================================================== */
+.modal-logout-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.85);
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+}
+
+.modal-logout-card {
+    background-color: #1c1c1c;
+    border: 2px solid var(--neon-red);
+    box-shadow: 0 0 20px rgba(255, 0, 85, 0.4);
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 350px;
+    width: 90%;
+}
+
+.modal-logout-titulo {
+    color: var(--neon-red);
+    margin-top: 0;
+    letter-spacing: 1px;
+}
+
+.modal-logout-mensagem {
+    color: #ffffff;
+    margin-bottom: 0;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+/* ==========================================================================
+   MODAL DE CASAMENTO (CORRIGIDO PARA POP-UP EM TELA CHEIA)
+   ========================================================================== */
+/* Overlay que cobre absolutamente toda a janela do navegador */
+.modal-setup-overlay {
+    position: fixed; /* Força o modal a desvincular-se do grid central e fixar na tela inteira */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85); /* Fundo escuro com opacidade */
+    backdrop-filter: blur(6px); /* Efeito de desfoque ao fundo */
+    display: none; /* Controlado dinamicamente pelo JS (flex / none) */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Valor altíssimo para garantir que fique à frente de menus e cards */
+    animation: fadeInOverlay 0.2s ease-out;
+}
+
+/* Card centralizado do Modal */
+.modal-setup-card {
+    background: #111111;
+    border-radius: 12px;
+    padding: 30px;
+    width: 90%;
+    max-width: 450px; /* Largura ideal para caixas de diálogo */
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    transition: all 0.3s ease;
+    box-sizing: border-box; /* Garante que os paddings não estoure a largura total */
+}
+
+/* Estados de feedback visual dinâmico */
+.modal-setup-card.estado-verde {
+    border: 2px solid var(--neon-green);
+    box-shadow: 0 0 20px rgba(163, 255, 0, 0.25);
+}
+
+.modal-setup-card.estado-amarelo {
+    border: 2px solid #ffcc00;
+    box-shadow: 0 0 20px rgba(255, 204, 0, 0.25);
+}
+
+.modal-setup-card.estado-vermelho {
+    border: 2px solid var(--neon-red);
+    box-shadow: 0 0 20px rgba(255, 0, 85, 0.25);
+}
+
+/* Elementos internos do cabeçalho */
+.modal-setup-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+#modal-resultado-icone {
+    font-size: 2.5rem;
+}
+
+#modal-resultado-titulo {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.modal-setup-divisor {
+    border: 0;
+    height: 1px;
+    background: #2d2d2d;
+    margin: 20px 0;
+}
+
+.modal-setup-body {
+    color: var(--text-gray);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.modal-setup-body strong {
+    color: #fff;
+}
+
+/* Botão de Fechar do Modal de Diagnóstico */
+.btn-modal-setup-fechar {
+    background: #1a1a1a;
+    border: 1px solid #444;
+    color: #fff;
+    padding: 12px 24px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.btn-modal-setup-fechar:hover {
+    background: #252525;
+    border-color: #888;
+}
+
+@keyframes fadeInOverlay {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ==========================================================================
+   ESTILOS DE GRID DA TELA DE CÁLCULO
+   ========================================================================== */
+.grid-setup {
+    display: grid;
+    grid-template-columns: 1fr 0.4fr 1fr;
+    gap: 15px;
+    align-items: start;
+    margin-top: 30px;
+    width: 100%;
+}
+
+.card-selection {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+    width: 100%;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.step-number {
+    color: var(--neon-green);
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.card-header h2 {
+    font-size: 1rem;
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+.search-box input, .input-automotivo {
+    width: 100%;
+    background-color: #0f0f0f;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 10px;
+    color: white;
+    box-sizing: border-box;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.search-box input:focus, .input-automotivo:focus {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 8px rgba(163, 255, 0, 0.4);
+}
+
+.list-container {
+    margin-top: 15px;
+    max-height: 280px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.list-item {
+    background: #141414;
+    border: 1px solid #222;
+    padding: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.list-item:hover {
+    border-color: var(--neon-green);
+    background: #181818;
+}
+
+.list-item.selected {
+    border-color: var(--neon-green);
+    background: rgba(163, 255, 0, 0.1);
+    box-shadow: 0 0 10px rgba(163, 255, 0, 0.2);
+}
+
+/* ==========================================================================
+   🎛️ PONTE VISUAL CENTRAL E ALINHAMENTO DA ONDA NEON (DESKTOP)
+   ========================================================================== */
+.visual-bridge {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    height: 100%;
+    min-height: 220px;
+    position: relative; 
+}
+
+.action-container {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    z-index: 4;
+}
+
+.action-tip {
+    font-size: 0.8rem;
+    color: var(--text-gray);
+    margin-bottom: 8px;
+}
+
+#btn-verificar {
+    background: transparent;
+    color: var(--neon-green);
+    border: 2px solid var(--neon-green);
+    padding: 12px 20px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: 0.3s;
+}
+
+#btn-verificar:hover {
+    background: var(--neon-green);
+    color: black;
+    box-shadow: 0 0 15px var(--neon-green);
+}
+
+.onda-neon-container {
+    position: relative;
+    width: 100%;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.onda-linha-fundo {
+    position: absolute;
+    top: 50%;
+    left: -16px;
+    right: -16px;
+    height: 2px;
+    background: rgba(163, 255, 0, 0.2);
+    z-index: 1;
+    transform: translateY(-50%);
+}
+
+.onda-pulso-neon {
+    position: absolute;
+    top: 50%;
+    left: -16px;
+    right: -16px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #a3ff00, #fff, #a3ff00, transparent);
+    background-size: 200% 100%;
+    z-index: 2;
+    transform: translateY(-50%);
+    box-shadow: 0 0 14px #a3ff00, 0 0 5px #fff;
+    animation: moverOndaSom 2s linear infinite, pulsarBrilhoOnda 1.5s ease-in-out infinite alternate;
+}
+
+.neon-circle {
+    position: relative;
+    z-index: 3;
+    background: #0d0d0d;
+    border: 2px solid var(--neon-green);
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px rgba(163, 255, 0, 0.5);
+}
+
+.neon-circle img {
+    width: 35px;
+    height: 35px;
+    object-fit: contain;
+}
+
+/* ==========================================================================
+   📊 TABELA DO CATÁLOGO (COM CONTAINER DE SCROLL RESPONSIVO)
+   ========================================================================== */
+/* Solução principal: Cria scroll horizontal isolado apenas na tabela */
+.catalogo-main {
+    width: 100%;
+    overflow-x: auto; 
+    -webkit-overflow-scrolling: touch; /* Suaviza a rolagem nos iPhones */
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    margin-top: 15px;
+}
+
+.tabela-produtos {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card-bg);
+}
+
+.tabela-produtos th, .tabela-produtos td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap; /* Impede os textos de quebrarem feio dentro da célula */
+}
+
+.tabela-produtos th {
+    background-color: #141414;
+    color: var(--neon-green);
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+}
+
+.tabela-produtos tr:hover td {
+    background-color: rgba(255,255,255,0.02);
+}
+
+/* Botões de Ações na Tabela */
+.btn-tabela {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-right: 5px;
+    font-size: 0.75rem;
+    display: inline-block;
+}
+
+.btn-editar { background-color: #1d3557; color: #a8dadc; }
+.btn-editar:hover { background-color: #457b9d; }
+.btn-excluir { background-color: #c1121f; color: white; }
+.btn-excluir:hover { background-color: #780000; }
+
+/* ==========================================================================
+   📱 MENU INFERIOR FIXO
+   ========================================================================== */
+.menu-inferior {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    background: #090909;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 10px 0;
+    z-index: 9999;
+}
+
+.btn-menu {
+    background: transparent;
+    border: none;
+    color: var(--text-gray);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: 0.2s;
+    width: 80px;
+}
+
+.btn-menu img { opacity: 0.6; transition: 0.2s; }
+.btn-menu:hover { color: white; }
+.btn-menu:hover img { opacity: 0.9; }
+
+.btn-menu.ativo { color: var(--neon-green); font-weight: bold; }
+.btn-menu.ativo img { opacity: 1; filter: drop-shadow(0 0 5px var(--neon-green)); }
+
+/* Modais Estrutura Geral */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background-color: rgba(0,0,0,0.75);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10100;
+    padding: 15px;
+}
+
+.modal-card {
+    background-color: #161616;
+    padding: 25px;
+    width: 100%;
+    max-width: 460px;
+    border-radius: 12px;
+    box-sizing: border-box;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.border-green { border: 2px solid var(--neon-green); box-shadow: 0 0 20px rgba(163,255,0,0.2); }
+.border-red { border: 2px solid var(--neon-red); box-shadow: 0 0 20px rgba(255,0,85,0.2); }
+
+.modal-card h3 { margin-top: 0; font-size: 1.2rem; }
+.modal-divisao { border: 0; border-top: 1px solid var(--border-color); margin: 15px 0; }
+.form-group { display: flex; flex-direction: column; gap: 10px; }
+.form-group label { font-size: 0.8rem; color: var(--text-gray); margin-bottom: -5px; }
+.form-row { display: flex; gap: 15px; }
+.form-row > div { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+.modal-actions button { padding: 10px 18px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; }
+
+.btn-cancelar { background: #2a2a2a; color: white; }
+.btn-salvar { background: var(--neon-green); color: black; }
+.btn-deletar { background: var(--neon-red); color: white; }
+.text-neon-red { color: var(--neon-red); }
+
+/* CONTROLES DO CATÁLOGO (FILTROS) */
+.catalogo-controles {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    padding: 15px;
+    background: rgba(20, 20, 20, 0.6);
+    border: 1px solid rgba(255, 0, 85, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    width: 100%;
+}
+
+.busca-grupo {
+    flex: 1;
+}
+
+#busca-catalogo {
+    width: 100%;
+    padding: 12px 16px;
+    background: #111;
+    border: 2px solid #333;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+#busca-catalogo:focus {
+    outline: none;
+    border-color: #a3ff00;
+    box-shadow: 0 0 10px rgba(163, 255, 0, 0.3);
+}
+
+.filtros-grupo {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-filtro {
+    padding: 10px 20px;
+    background: #1a1a1a;
+    border: 1px solid #444;
+    border-radius: 6px;
+    color: #bbb;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    white-space: nowrap;
+}
+
+.btn-filtro:hover {
+    color: #fff;
+    border-color: #ff0055;
+    background: rgba(255, 0, 85, 0.05);
+}
+
+.btn-filtro.ativo {
+    background: #a3ff00;
+    color: #000;
+    border-color: #a3ff00;
+    box-shadow: 0 0 12px rgba(163, 255, 0, 0.4);
+}
+
+.btn-adicionar {
+    background: var(--neon-green) !important;
+    color: #000 !important;
+    border-color: var(--neon-green) !important;
+    font-weight: 700;
+}
+
+.btn-adicionar:hover {
+    box-shadow: 0 0 12px rgba(163, 255, 0, 0.6) !important;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.badge-modulo {
+    background: rgba(255, 0, 85, 0.15);
+    color: #ff0055;
+    border: 1px solid #ff0055;
+}
+
+.badge-falante {
+    background: rgba(163, 255, 0, 0.15);
+    color: #a3ff00;
+    border: 1px solid #a3ff00;
+}
+
+/* ==========================================================================
+   📱 MEDIAS QUERIES GERAIS - AJUSTE RESPONSIVO DEFINITIVO (< 900px)
+   ========================================================================== */
+@media (max-width: 900px) {
+    
+    body {
+        padding-top: 90px; /* Mais espaço no topo para o botão de usuário no celular */
+    }
+
+    .container-usuario-topo {
+        position: absolute;
+        top: 15px;
+        left: 50%;
+        transform: translateX(-50%); /* Centraliza o login administrativo no topo do celular */
+    }
+
+    /* 1. ABA DE CÁLCULO RESPONSIVA */
+    .grid-setup {
+        grid-template-columns: 1fr !important; /* Transforma o grid de 3 colunas em 1 vertical */
+        gap: 20px;
+    }
+
+    .visual-bridge {
+        flex-direction: column !important;
+        min-height: auto !important;
+        padding: 10px 0 !important;
+        gap: 15px !important;
+    }
+
+    /* Oculta as ondas horizontais do PC para não estourarem a tela lateralmente */
+    .onda-linha-fundo, 
+    .onda-pulso-neon {
+        display: none !important;
+    }
+
+    .onda-neon-container {
+        height: auto !important;
+        width: auto !important;
+    }
+
+    /* Deixa o círculo do raio sutil e centralizado entre os cards */
+    .neon-circle {
+        width: 60px !important;
+        height: 60px !important;
+        box-shadow: 0 0 15px rgba(163, 255, 0, 0.4) !important;
+    }
+
+    .neon-circle img {
+        width: 26px !important;
+        height: 26px !important;
+    }
+
+    /* Reordena o fluxo visual no mobile */
+    #modulo-section { order: 1; }
+    .visual-bridge { order: 2; }
+    #falante-section { order: 3; }
+
+    /* 2. ABA DE CATÁLOGO RESPONSIVA */
+    .catalogo-controles {
+        flex-direction: column !important; /* Empilha os filtros e buscas */
+        align-items: stretch !important;
+        gap: 12px !important;
+        padding: 12px !important;
+    }
+
+    .filtros-grupo {
+        width: 100% !important;
+        display: flex !important;
+        gap: 8px !important;
+    }
+
+    .btn-filtro {
+        flex: 1 !important;
+        padding: 10px 2px !important;
+        font-size: 0.8rem !important;
+        text-align: center !important;
+    }
+
+    .adicionar-grupo {
+        width: 100%;
+    }
+
+    .btn-adicionar {
+        width: 100%;
+        text-align: center;
+    }
+
+    .tabela-produtos th, .tabela-produtos td {
+        padding: 10px 8px !important;
+        font-size: 0.85rem !important;
+    }
+
+    /* 3. MENU INFERIOR MOBILE */
+    .menu-inferior {
+        gap: 15px !important;
+    }
+}
+
+/* Reduções adicionais para telas minúsculas de celular */
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.1rem;
+    }
+    .card-selection {
+        padding: 15px;
+    }
+    .form-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+/* ==========================================================================
+   ANIMAÇÕES
+   ========================================================================== */
+@keyframes moverOndaSom {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+@keyframes pulsarBrilhoOnda {
+    0% {
+        opacity: 0.6;
+        box-shadow: 0 0 8px rgba(163, 255, 0, 0.4);
+    }
+    100% {
+        opacity: 1;
+        box-shadow: 0 0 18px rgba(163, 255, 0, 0.8), 0 0 6px #fff;
+    }
+}
