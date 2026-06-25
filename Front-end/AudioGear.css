@@ -957,3 +957,139 @@ header h1 {
         box-shadow: 0 0 18px rgba(163, 255, 0, 0.8), 0 0 6px #fff;
     }
 }
+
+/* ==========================================================================
+   CLASSES DOS MODAIS DE FEEDBACK
+   ========================================================================== */
+ 
+.modal-titulo {
+    margin: 0;
+}
+ 
+.modal-titulo-verde {
+    margin: 0;
+    color: var(--neon-green);
+}
+ 
+.modal-titulo-vermelho {
+    margin: 0;
+    color: var(--neon-red, #ff0055);
+}
+ 
+.modal-texto {
+    color: #e0e0e0;
+    line-height: 1.6;
+}
+ 
+
+/* ==========================================================================
+   PAINEL ADMIN - LISTA DE USUARIOS E STATS
+   ========================================================================== */
+
+.painel-admin-grid-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.card-lista-usuarios,
+.card-stats {
+    background: var(--card-bg, #111);
+    border: 1px solid var(--border-color, #2a2a2a);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.lista-usuarios-container {
+    max-height: 280px;
+    overflow-y: auto;
+    margin-top: 12px;
+}
+
+.tabela-usuarios {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.tabela-usuarios th {
+    color: var(--neon-green);
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border-color, #2a2a2a);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+}
+
+.tabela-usuarios td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border-color, #1a1a1a);
+    color: #ccc;
+}
+
+.tabela-usuarios tr:last-child td {
+    border-bottom: none;
+}
+
+.stats-container {
+    margin-top: 12px;
+}
+
+.stat-total {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 0;
+    gap: 4px;
+}
+
+.stat-numero {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--neon-green);
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.stats-marcas {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+.stat-marca-linha {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    background: var(--bg-secondary, #0f0f0f);
+    border-radius: 4px;
+    border-left: 3px solid var(--neon-green);
+}
+
+.stat-marca-nome {
+    font-size: 0.85rem;
+    color: #ddd;
+}
+
+.stat-marca-qtd {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--neon-green);
+}
+
+@media (max-width: 768px) {
+    .painel-admin-grid-bottom {
+        grid-template-columns: 1fr;
+    }
+}

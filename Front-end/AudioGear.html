@@ -155,12 +155,14 @@
                     <button onclick="executarLogout()" class="btn-logout">Sair do Sistema</button>
                 </div>
 
+                <!-- LINHA 1: CADASTRO E REMOÇÃO -->
                 <div class="painel-admin-grid">
                     <div class="card-admin-action">
                         <h4>Cadastrar Novo Admin</h4>
                         <div class="form-group-admin">
-                            <input type="text" id="new-username" class="input-automotivo" placeholder="Novo Usuário">
-                            <input type="password" id="new-password" class="input-automotivo" placeholder="Nova Senha">
+                            <input type="text" id="new-username" class="input-automotivo" placeholder="Usuário">
+                            <input type="email" id="new-email" class="input-automotivo" placeholder="E-mail (opcional)">
+                            <input type="password" id="new-password" class="input-automotivo" placeholder="Senha">
                             <button onclick="executarCadastroUsuario()" class="btn-acao-admin btn-salvar-admin">Cadastrar</button>
                         </div>
                     </div>
@@ -172,6 +174,39 @@
                             <button onclick="executarExclusaoUsuario()" class="btn-acao-admin btn-deletar-admin">Deletar</button>
                         </div>
                     </div>
+                </div>
+
+                <!-- LINHA 2: LISTA DE USUARIOS E STATS DE COMPONENTES -->
+                <div class="painel-admin-grid-bottom">
+
+                    <div class="card-admin-action card-lista-usuarios">
+                        <h4>👥 Usuários Cadastrados</h4>
+                        <div class="lista-usuarios-container">
+                            <table class="tabela-usuarios">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>USUÁRIO</th>
+                                        <th>E-MAIL</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabela-corpo-usuarios"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card-admin-action card-stats">
+                        <h4>📊 Estatísticas do Catálogo</h4>
+                        <div class="stats-container">
+                            <div class="stat-total">
+                                <span class="stat-numero" id="stat-total">0</span>
+                                <span class="stat-label">Total de Componentes</span>
+                            </div>
+                            <hr class="modal-divisao">
+                            <div id="stats-por-marca" class="stats-marcas"></div>
+                        </div>
+                    </div>
+
                 </div>
             </main>
         </div>
@@ -302,6 +337,159 @@
         <div class="modal-logout-card">
             <h3 class="modal-logout-titulo">🚪 LOGOUT</h3>
             <p class="modal-logout-mensagem">Sessão encerrada com sucesso.<br>Até logo, Admin!</p>
+        </div>
+    </div>
+
+
+    <!-- MODAL: COMPONENTE JA CADASTRADO -->
+    <div id="modal-componente-em-uso" class="modal-overlay">
+        <div class="modal-card border-red">
+            <div class="resultado-header">
+                <img src="https://img.icons8.com/ios-filled/40/ff0055/error.png" alt="Erro">
+                <h3 class="modal-titulo-vermelho">COMPONENTE JÁ EXISTE!</h3>
+            </div>
+            <hr class="modal-divisao">
+            <p id="modal-componente-em-uso-msg" class="modal-texto"></p>
+            <div class="modal-actions">
+                <button class="btn-deletar" onclick="document.getElementById('modal-componente-em-uso').style.display='none'">OK</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MODAL: COMPONENTE CADASTRADO -->
+    <div id="modal-componente-cadastrado" class="modal-overlay">
+        <div class="modal-card border-green">
+            <div class="resultado-header">
+                <img src="https://img.icons8.com/ios-filled/40/a3ff00/checked--v1.png" alt="Sucesso">
+                <h3 class="modal-titulo-verde">COMPONENTE CADASTRADO!</h3>
+            </div>
+            <hr class="modal-divisao">
+            <p id="modal-componente-cadastrado-msg" class="modal-texto"></p>
+            <div class="modal-actions">
+                <button class="btn-salvar" onclick="document.getElementById('modal-componente-cadastrado').style.display='none'">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: USUARIO CADASTRADO -->
+    <div id="modal-usuario-cadastrado" class="modal-overlay">
+        <div class="modal-card border-green">
+            <div class="resultado-header">
+                <img src="https://img.icons8.com/ios-filled/40/a3ff00/checked--v1.png" alt="Sucesso">
+                <h3 class="modal-titulo-verde">USUÁRIO CADASTRADO!</h3>
+            </div>
+            <hr class="modal-divisao">
+            <p id="modal-usuario-cadastrado-msg" class="modal-texto"></p>
+            <div class="modal-actions">
+                <button class="btn-salvar" onclick="document.getElementById('modal-usuario-cadastrado').style.display='none'">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: USUARIO DELETADO -->
+    <div id="modal-usuario-deletado" class="modal-overlay">
+        <div class="modal-card border-red">
+            <div class="resultado-header">
+                <img src="https://img.icons8.com/ios-filled/40/ff0055/delete-user-male.png" alt="Deletado">
+                <h3 class="modal-titulo-vermelho">USUÁRIO REMOVIDO!</h3>
+            </div>
+            <hr class="modal-divisao">
+            <p id="modal-usuario-deletado-msg" class="modal-texto"></p>
+            <div class="modal-actions">
+                <button class="btn-deletar" onclick="document.getElementById('modal-usuario-deletado').style.display='none'">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: USUARIO JA EM USO -->
+    <div id="modal-usuario-em-uso" class="modal-overlay">
+        <div class="modal-card border-red">
+            <div class="resultado-header">
+                <img src="https://img.icons8.com/ios-filled/40/ff0055/error.png" alt="Erro">
+                <h3 class="modal-titulo-vermelho">USUÁRIO JÁ EXISTE!</h3>
+            </div>
+            <hr class="modal-divisao">
+            <p id="modal-usuario-em-uso-msg" class="modal-texto"></p>
+            <div class="modal-actions">
+                <button class="btn-deletar" onclick="document.getElementById('modal-usuario-em-uso').style.display='none'">OK</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MODAL: COMPONENTE CADASTRADO -->
+    <div id="modal-componente-cadastrado" class="modal-overlay">
+        <div class="modal-card border-green">
+            <div class="resultado-header">
+                <img src="https://img.icons8.com/ios-filled/40/a3ff00/checked--v1.png" alt="Sucesso">
+                <h3 class="modal-titulo-verde">COMPONENTE CADASTRADO!</h3>
+            </div>
+            <hr class="modal-divisao">
+            <p id="modal-componente-cadastrado-msg" class="modal-texto"></p>
+            <div class="modal-actions">
+                <button class="btn-salvar" onclick="document.getElementById('modal-componente-cadastrado').style.display='none'">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: COMPONENTE JA CADASTRADO -->
+    <div id="modal-componente-em-uso" class="modal-overlay">
+        <div class="modal-card border-red">
+            <div class="resultado-header">
+                <img src="https://img.icons8.com/ios-filled/40/ff0055/error.png" alt="Erro">
+                <h3 class="modal-titulo-vermelho">COMPONENTE JÁ EXISTE!</h3>
+            </div>
+            <hr class="modal-divisao">
+            <p id="modal-componente-em-uso-msg" class="modal-texto"></p>
+            <div class="modal-actions">
+                <button class="btn-deletar" onclick="document.getElementById('modal-componente-em-uso').style.display='none'">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: USUARIO CADASTRADO -->
+    <div id="modal-usuario-cadastrado" class="modal-overlay">
+        <div class="modal-card border-green">
+            <div class="resultado-header">
+                <img src="https://img.icons8.com/ios-filled/40/a3ff00/checked--v1.png" alt="Sucesso">
+                <h3 class="modal-titulo-verde">USUÁRIO CADASTRADO!</h3>
+            </div>
+            <hr class="modal-divisao">
+            <p id="modal-usuario-cadastrado-msg" class="modal-texto"></p>
+            <div class="modal-actions">
+                <button class="btn-salvar" onclick="document.getElementById('modal-usuario-cadastrado').style.display='none'">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: USUARIO DELETADO -->
+    <div id="modal-usuario-deletado" class="modal-overlay">
+        <div class="modal-card border-red">
+            <div class="resultado-header">
+                <img src="https://img.icons8.com/ios-filled/40/ff0055/delete-user-male.png" alt="Deletado">
+                <h3 class="modal-titulo-vermelho">USUÁRIO REMOVIDO!</h3>
+            </div>
+            <hr class="modal-divisao">
+            <p id="modal-usuario-deletado-msg" class="modal-texto"></p>
+            <div class="modal-actions">
+                <button class="btn-deletar" onclick="document.getElementById('modal-usuario-deletado').style.display='none'">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: USUARIO JA EM USO -->
+    <div id="modal-usuario-em-uso" class="modal-overlay">
+        <div class="modal-card border-red">
+            <div class="resultado-header">
+                <img src="https://img.icons8.com/ios-filled/40/ff0055/error.png" alt="Erro">
+                <h3 class="modal-titulo-vermelho">USUÁRIO JÁ EXISTE!</h3>
+            </div>
+            <hr class="modal-divisao">
+            <p id="modal-usuario-em-uso-msg" class="modal-texto"></p>
+            <div class="modal-actions">
+                <button class="btn-deletar" onclick="document.getElementById('modal-usuario-em-uso').style.display='none'">OK</button>
+            </div>
         </div>
     </div>
 

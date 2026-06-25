@@ -1,5 +1,11 @@
-const API_URL = "https://audiogear.onrender.com/api/componentes";
-const API_AUTH_URL = "https://audiogear.onrender.com/auth";
+//const API_URL = "https://audiogear.onrender.com/api/componentes"; // PROD
+//const API_AUTH_URL = "https://audiogear.onrender.com/auth"; // PROD
+
+const API_URL = "http://localhost:8080/api/componentes"; // LOCAL
+const API_AUTH_URL = "http://localhost:8080/auth"; // LOCAL
+
+//const API_URL = "https://localhost.run/docs/forever-free/"; // LOCALHOST 
+//const API_AUTH_URL = "https://770310c2d9f11a.lhr.life"; // LOCALHOST
 
 let moduloSelecionado = null;
 let falanteSelecionado = null;
@@ -30,6 +36,8 @@ function alternarAba(nomeAba) {
         botoes[1].classList.add('ativo');
         carregarCatalogoCompleto(); 
     } else if (nomeAba === 'painel-admin') {
+        carregarUsuarios();
+        carregarStats();
         document.getElementById('aba-painel-admin').classList.add('ativa');
         if(botoes[2]) botoes[2].classList.add('ativo');
     }
@@ -471,13 +479,21 @@ async function executarCadastroPeloModal(event) {
         });
 
         if (response.ok) {
-            alert("Equipamento cadastrado com sucesso!");
-            fecharModalCadastro(); 
+            fecharModalCadastro();
             carregarCatalogoCompleto();
             carregarComponentesParaCalculo();
+            document.getElementById('modal-componente-cadastrado-msg').innerHTML =
+                `O componente <strong>${nome}</strong> foi adicionado ao catálogo com sucesso!`;
+            document.getElementById('modal-componente-cadastrado').style.display = 'flex';
         } else {
             const erroTexto = await response.text();
-            alert(`Erro do Servidor (${response.status}): ${erroTexto || 'Falta de permissão.'}`);
+            if (response.status === 409 || (erroTexto && erroTexto.toLowerCase().includes('já'))) {
+                document.getElementById('modal-componente-em-uso-msg').innerHTML =
+                    `O componente <strong>${nome}</strong> já está cadastrado no sistema.`;
+                document.getElementById('modal-componente-em-uso').style.display = 'flex';
+            } else {
+                alert(`Erro do Servidor (${response.status}): ${erroTexto || 'Falta de permissão.'}`);
+            }
         }
     } catch (error) {
         console.error("Erro na requisição de cadastro:", error);
@@ -576,6 +592,8 @@ function confirmarExclusaoNoBanco() {
     });
 }
 
+
+
 // VARIÁVEIS GLOBAIS DE CONTROLE DO CATÁLOGO
 let produtosCarregados = []; // Guarda a lista vinda do banco para aplicar os filtros
 let filtroTipoAtual = 'TODOS'; // Guarda o tipo selecionado (TODOS, AMPLIFICADOR, ALTO_FALANTE)
@@ -668,6 +686,7 @@ function executarCadastroUsuario() {
     let tokenRaw = sessionStorage.getItem('token') || sessionStorage.getItem('token_jwt') || sessionStorage.getItem('JWT');
     const token = tokenRaw ? tokenRaw.replace(/['"]+/g, '').trim() : '';
     const userIn = document.getElementById('new-username').value;
+    const emailIn = document.getElementById('new-email') ? document.getElementById('new-email').value : '';
     const passIn = document.getElementById('new-password').value;
 
     if(!userIn || !passIn) return alert("Preencha usuário e senha!");
@@ -678,14 +697,22 @@ function executarCadastroUsuario() {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + token
         },
-        body: JSON.stringify({ username: userIn, password: passIn })
+        body: JSON.stringify({ username: userIn, password: passIn, email: emailIn || null })
     })
     .then(async res => {
         const msg = await res.text();
         if(res.ok) {
-            alert("Novo administrador registrado!");
             document.getElementById('new-username').value = '';
             document.getElementById('new-password').value = '';
+            if(document.getElementById('new-email')) document.getElementById('new-email').value = '';
+            carregarUsuarios();
+            document.getElementById('modal-usuario-cadastrado-msg').innerHTML =
+                `O administrador <strong>${userIn}</strong> foi cadastrado com sucesso no sistema!`;
+            document.getElementById('modal-usuario-cadastrado').style.display = 'flex';
+        } else if(msg.toLowerCase().includes('já está em uso') || res.status === 400) {
+            document.getElementById('modal-usuario-em-uso-msg').innerHTML =
+                `O usuário <strong>${userIn}</strong> já está cadastrado. Escolha outro nome.`;
+            document.getElementById('modal-usuario-em-uso').style.display = 'flex';
         } else {
             alert("Erro ao criar usuário: " + msg);
         }
@@ -706,10 +733,67 @@ function executarExclusaoUsuario() {
     .then(async res => {
         const msg = await res.text();
         if(res.ok) {
-            alert("Usuário removido com sucesso!");
             document.getElementById('delete-user-id').value = '';
+            carregarUsuarios();
+            document.getElementById('modal-usuario-deletado-msg').innerHTML =
+                `O usuário de ID <strong>${idIn}</strong> foi removido permanentemente do sistema.`;
+            document.getElementById('modal-usuario-deletado').style.display = 'flex';
         } else {
             alert("Erro ao remover usuário: " + msg);
         }
     });
+}
+// CARREGAR LISTA DE USUARIOS NO PAINEL ADMIN
+function carregarUsuarios() {
+    const token = sessionStorage.getItem('token');
+    if (!token) return;
+
+    fetch(`${API_AUTH_URL}/usuarios`, {
+        headers: { 'Authorization': 'Bearer ' + token }
+    })
+    .then(res => res.json())
+    .then(usuarios => {
+        const corpo = document.getElementById('tabela-corpo-usuarios');
+        if (!corpo) return;
+        corpo.innerHTML = '';
+        usuarios.forEach(u => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${u.id}</td>
+                <td>${u.username}</td>
+                <td>${u.email || '-'}</td>
+            `;
+            corpo.appendChild(tr);
+        });
+    })
+    .catch(err => console.error('Erro ao carregar usuários:', err));
+}
+
+// CARREGAR STATS DE COMPONENTES NO PAINEL ADMIN
+function carregarStats() {
+    fetch(API_URL)
+    .then(res => res.json())
+    .then(dados => {
+        const total = document.getElementById('stat-total');
+        if(total) total.innerText = dados.length;
+
+        const porMarca = {};
+        dados.forEach(c => {
+            porMarca[c.marca] = (porMarca[c.marca] || 0) + 1;
+        });
+
+        const container = document.getElementById('stats-por-marca');
+        if(!container) return;
+        container.innerHTML = '';
+
+        Object.entries(porMarca)
+            .sort((a, b) => b[1] - a[1])
+            .forEach(([marca, qtd]) => {
+                const div = document.createElement('div');
+                div.className = 'stat-marca-linha';
+                div.innerHTML = `<span class="stat-marca-nome">${marca}</span><span class="stat-marca-qtd">${qtd}</span>`;
+                container.appendChild(div);
+            });
+    })
+    .catch(err => console.error('Erro ao carregar stats:', err));
 }

@@ -13,8 +13,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
@@ -33,7 +35,6 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // --- ENDPOINT DE LOGIN (Você já tinha) ---
     @PostMapping("/login")
     public ResponseEntity<?> logar(@RequestBody LoginDto loginDto) {
         try {
@@ -50,35 +51,40 @@ public class AuthController {
         }
     }
 
-    // --- NOVO ENDPOINT: CADASTRO DE USUÁRIO ---
     @PostMapping("/cadastrar")
     public ResponseEntity<?> cadastrar(@RequestBody LoginDto cadastroDto) {
-        // Verifica se o username já existe no banco para não duplicar
         if (usuarioRepository.findByUsername(cadastroDto.getUsername()).isPresent()) {
             return ResponseEntity.badRequest().body("Erro: Este nome de usuário já está em uso!");
         }
 
         Usuario novoUsuario = new Usuario();
         novoUsuario.setUsername(cadastroDto.getUsername());
-
-        // CRUCIAL: Criptografa a senha com BCrypt antes de salvar no banco
-        String senhaCriptografada = passwordEncoder.encode(cadastroDto.getPassword());
-        novoUsuario.setPassword(senhaCriptografada);
+        novoUsuario.setPassword(passwordEncoder.encode(cadastroDto.getPassword()));
+        novoUsuario.setEmail(cadastroDto.getEmail());
 
         usuarioRepository.save(novoUsuario);
         return ResponseEntity.ok("Usuário cadastrado com sucesso!");
     }
 
-    // --- NOVO ENDPOINT: REMOÇÃO DE USUÁRIO ---
     @DeleteMapping("/deletar/{id}")
     public ResponseEntity<?> deletarUsuario(@PathVariable Long id) {
         Optional<Usuario> usuario = usuarioRepository.findById(id);
-
         if (usuario.isEmpty()) {
             return ResponseEntity.status(404).body("Erro: Usuário não encontrado.");
         }
-
         usuarioRepository.deleteById(id);
         return ResponseEntity.ok("Usuário removido com sucesso!");
+    }
+
+    @GetMapping("/usuarios")
+    public ResponseEntity<?> listarUsuarios() {
+        List<Map<String, Object>> usuarios = usuarioRepository.findAll().stream().map(u -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", u.getId());
+            map.put("username", u.getUsername());
+            map.put("email", u.getEmail() != null ? u.getEmail() : "-");
+            return map;
+        }).collect(Collectors.toList());
+        return ResponseEntity.ok(usuarios);
     }
 }
