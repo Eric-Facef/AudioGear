@@ -1,5 +1,5 @@
-//const API_AUTH_URL = 'https://audiogear.onrender.com/auth'; // PROD
-const API_AUTH_URL = 'http://localhost:8080/auth'; // LOCAL
+const API_AUTH_URL = 'https://audiogear.onrender.com/auth'; // PROD
+//const API_AUTH_URL = 'http://localhost:8080/auth'; // LOCAL
 //const API_AUTH_URL = "https://770310c2d9f11a.lhr.life/auth"; // LOCALHOST
 
 // Roda automaticamente assim que a página abre
