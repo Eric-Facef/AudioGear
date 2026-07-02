@@ -1,5 +1,8 @@
 const API_URL = "https://audiogear.onrender.com/api/componentes"; // PROD
 const API_AUTH_URL = "https://audiogear.onrender.com/auth"; // PROD
+const API_LOGS_URL = "https://audiogear.onrender.com/api/logs"; // PROD
+
+//const API_LOGS_URL = "http://localhost:8080/api/logs"; // LOCAL
 
 //const API_URL = "http://localhost:8080/api/componentes"; // LOCAL
 //const API_AUTH_URL = "http://localhost:8080/auth"; // LOCAL
@@ -840,7 +843,7 @@ function abrirTerminalSecreto() {
     container.innerHTML = "<p style='color: #888;'>Buscando registros na tabela public.logs_auditoria...</p>";
 
     // Faz a chamada para o endpoint que criamos no Spring Boot
-    fetch("http://localhost:8080/api/logs", {
+    fetch(API_LOGS_URL, {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`
