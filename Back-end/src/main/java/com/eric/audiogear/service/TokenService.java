@@ -26,7 +26,25 @@ public class TokenService {
 
     @PostConstruct
     public void init() {
-        this.key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret));
+        // .trim() protege contra espaco/quebra de linha extra que podem entrar
+        // sem querer ao colar o valor em variaveis de ambiente (Render, etc.)
+        String secretLimpo = secret == null ? "" : secret.trim();
+
+        if (secretLimpo.isEmpty()) {
+            throw new IllegalStateException(
+                    "jwt.secret nao foi configurado. Defina a variavel de ambiente JWT_SECRET."
+            );
+        }
+
+        try {
+            this.key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretLimpo));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException(
+                    "jwt.secret nao e um Base64 valido. Gere uma nova chave com "
+                            + "'openssl rand -base64 32' e confira se nao ha espacos/quebras de linha extras "
+                            + "ao colar o valor na variavel de ambiente JWT_SECRET.", e
+            );
+        }
     }
 
     public String gerarToken(String username) {
