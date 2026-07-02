@@ -797,3 +797,92 @@ function carregarStats() {
     })
     .catch(err => console.error('Erro ao carregar stats:', err));
 }
+
+// ==========================================================================
+// ⌨️ SISTEMA DO TERMINAL OCULTO DE AUDITORIA (MÁGICA DO BACK-END)
+// ==========================================================================
+let sequenciaTeclas = "";
+const PALAVRA_SECRETA = "bash";
+
+window.addEventListener("keydown", (e) => {
+    // Só captura se o usuário não estiver digitando em nenhum input de busca
+    if (document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "SELECT") {
+        return;
+    }
+
+    sequenciaTeclas += e.key.toLowerCase();
+    
+    // Mantém o tamanho do buffer controlado
+    if (sequenciaTeclas.length > 10) {
+        sequenciaTeclas = sequenciaTeclas.slice(-4);
+    }
+
+    if (sequenciaTeclas.endsWith(PALAVRA_SECRETA)) {
+        sequenciaTeclas = ""; // Limpa buffer
+        abrirTerminalSecreto();
+    }
+});
+
+function abrirTerminalSecreto() {
+    const token = sessionStorage.getItem('token'); // Puxa do seu controle real de login
+
+    // Validação de Segurança: Só abre se o usuário estiver de fato autenticado
+    if (!token) {
+        console.warn("Acesso negado: Sem token administrativo ativo.");
+        return;
+    }
+
+    const modalTerminal = document.getElementById("terminalSecreto");
+    if (modalTerminal) modalTerminal.style.display = "flex";
+
+    const container = document.getElementById("logsContainer");
+    if (!container) return;
+    container.innerHTML = "<p style='color: #888;'>Buscando registros na tabela public.logs_auditoria...</p>";
+
+    // Faz a chamada para o endpoint que criamos no Spring Boot
+    fetch("http://localhost:8080/api/logs", {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    })
+    .then(res => {
+        if (!res.ok) throw new Error(`Status: ${res.status}`);
+        return res.json();
+    })
+    .then(logs => {
+        console.log("=== RETORNO DO BANCO ===", logs); // 🌟 Adicione essa linha aqui!
+        container.innerHTML = "";
+
+        if (logs.length === 0) {
+            container.innerHTML = "<p style='color: #888;'>Nenhum registro de auditoria gravado no Neon banco ainda.</p>";
+            return;
+        }
+
+        logs.forEach(log => {
+            let corAcao = "#3399ff"; // Azul padrão
+            if (log.acao.includes("FALHA")) corAcao = "#ff0055"; // Rosa/Vermelho neon
+            if (log.acao.includes("SUCESSO")) corAcao = "#a3ff00"; // Verde neon
+
+            const dataFormatada = new Date(log.dataHora).toLocaleString('pt-BR');
+
+            container.innerHTML += `
+                <p style="margin-bottom: 8px; border-bottom: 1px dashed #222; padding-bottom: 4px;">
+                    <span style="color: #666;">[${dataFormatada}]</span> 
+                    <span style="color: ${corAcao}; font-weight: bold;">[${log.acao}]</span> 
+                    <span style="color: #fff;"><strong>Usuário:</strong> ${log.usuarioAdm}</span> <br>
+                    <span style="color: #ccc; padding-left: 10px;">➔ ${log.descricao}</span>
+                </p>
+            `;
+        });
+    })
+    .catch(err => {
+        console.error(err);
+        container.innerHTML = `<p style='color: #ff0055;'>➔ Erro ao carregar logs. Verifique se o endpoint GET /api/logs exige roles adequadas.</p>`;
+    });
+}
+
+function fecharTerminal() {
+    const modalTerminal = document.getElementById("terminalSecreto");
+    if (modalTerminal) modalTerminal.style.display = "none";
+}

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>AudioGear - Painel Completo</title>
+    <style>
+        body {
+            font-family: monospace;
+            background-color: #ffffff;
+            color: #000000;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1, h2, h3 { border-bottom: 2px solid #000; padding-bottom: 5px; }
+        .container { display: flex; gap: 40px; }
+        .coluna { flex: 1; }
+        .campo { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input, select, button {
+            width: 100%;
+            padding: 8px;
+            font-family: monospace;
+            border: 2px solid #000;
+            background: #fff;
+            box-sizing: border-box;
+        }
+        button:hover { background: #000; color: #fff; cursor: pointer; }
+        #resultado-box {
+            margin-top: 20px;
+            padding: 15px;
+            border: 2px dashed #000;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>AudioGear - Controle e Teste</h1>
+
+    <div class="container">
+        
+        <div class="coluna">
+            <h2>1. Adicionar Componente (POST)</h2>
+            <form id="formCadastro">
+                <div class="campo">
+                    <label for="cadNome">Nome/Modelo:</label>
+                    <input type="text" id="cadNome" placeholder="Ex: TS 400X4" required>
+                </div>
+                <div class="campo">
+                    <label for="cadMarca">Marca:</label>
+                    <input type="text" id="cadMarca" placeholder="Ex: Taramps" required>
+                </div>
+                <div class="campo">
+                    <label for="cadTipo">Tipo:</label>
+                    <select id="cadTipo" required>
+                        <option value="AMPLIFICADOR">AMPLIFICADOR</option>
+                        <option value="ALTO_FALANTE">ALTO_FALANTE</option>
+                    </select>
+                </div>
+                <div class="campo">
+                    <label for="cadPotencia">Potência (RMS):</label>
+                    <input type="number" id="cadPotencia" placeholder="Ex: 400" min="1" required>
+                </div>
+                <div class="campo">
+                    <label for="cadImpedancia">Impedância (Ohms):</label>
+                    <input type="number" id="cadImpedancia" placeholder="Ex: 2" min="1" required>
+                </div>
+                <div class="campo" id="campoCanais">
+                    <label for="cadCanais">Quantidade de Canais:</label>
+                    <input type="number" id="cadCanais" placeholder="Ex: 4" min="1" value="1">
+                </div>
+                <button type="submit">SALVAR NO POSTGRES</button>
+            </form>
+        </div>
+
+        <div class="coluna">
+            <h2>2. Verificar Match (POST via DTO)</h2>
+            <div class="campo">
+                <label for="selectModulo">Módulo Amplificador:</label>
+                <select id="selectModulo">
+                    <option value="">Carregando módulos...</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label for="selectFalante">Alto-falante:</label>
+                <select id="selectFalante">
+                    <option value="">Carregando alto-falantes...</option>
+                </select>
+            </div>
+            <button id="btnCalcular">CALCULAR COMPATIBILIDADE</button>
+
+            <div id="resultado-box">
+                <h3>RESULTADO: <span id="resTitulo"></span></h3>
+                <p id="resDescricao"></p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:8080/api";
+
+        // Esconde o campo canais se selecionar ALTO_FALANTE no formulário
+        document.getElementById("cadTipo").addEventListener("change", (e) => {
+            const campoCanais = document.getElementById("campoCanais");
+            if (e.target.value === "ALTO_FALANTE") {
+                campoCanais.style.display = "none";
+            } else {
+                campoCanais.style.display = "block";
+            }
+        });
+
+        // FUNÇÃO DE LISTAR (GET)
+        async function carregarComponentes() {
+            try {
+                const resModulos = await fetch(`${API_URL}/componentes/tipo/AMPLIFICADOR`);
+                const modulos = await resModulos.json();
+                const selectModulo = document.getElementById("selectModulo");
+                selectModulo.innerHTML = '<option value="">-- Escolha um Módulo --</option>';
+                modulos.forEach(m => {
+                    selectModulo.innerHTML += `<option value="${m.id}">${m.marca} ${m.nome} (${m.impedancia}Ω)</option>`;
+                });
+
+                const resFalantes = await fetch(`${API_URL}/componentes/tipo/ALTO_FALANTE`);
+                const falantes = await resFalantes.json();
+                const selectFalante = document.getElementById("selectFalante");
+                selectFalante.innerHTML = '<option value="">-- Escolha um Alto-falante --</option>';
+                falantes.forEach(f => {
+                    selectFalante.innerHTML += `<option value="${f.id}">${f.marca} ${f.nome} (${f.impedancia}Ω)</option>`;
+                });
+            } catch (error) {
+                console.error("Erro ao carregar dados da API.");
+            }
+        }
+
+        // FUNÇÃO DE CADASTRAR (POST)
+        document.getElementById("formCadastro").addEventListener("submit", async (e) => {
+            e.preventDefault(); // Impede a página de recarregar
+
+            const tipo = document.getElementById("cadTipo").value;
+            const dados = {
+                nome: document.getElementById("cadNome").value,
+                marca: document.getElementById("cadMarca").value,
+                tipo: tipo,
+                potenciaRms: parseInt(document.getElementById("cadPotencia").value),
+                impedancia: parseInt(document.getElementById("cadImpedancia").value),
+                canais: tipo === "AMPLIFICADOR" ? parseInt(document.getElementById("cadCanais").value) : null
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/componentes`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(dados)
+                });
+
+                if (response.ok) {
+                    alert("Componente salvo com sucesso no Postgres!");
+                    document.getElementById("formCadastro").reset(); // Limpa o form
+                    carregarComponentes(); // Atualiza os selects automaticamente!
+                } else {
+                    alert("Erro ao salvar o componente.");
+                }
+            } catch (error) {
+                alert("Erro de conexão com o servidor.");
+            }
+        });
+
+        // FUNÇÃO DE CALCULAR MATCH (POST enviando DTO)
+        async function calcularMatch() {
+            const idModulo = document.getElementById("selectModulo").value;
+            const idAltoFalante = document.getElementById("selectFalante").value;
+
+            if (!idModulo || !idAltoFalante) {
+                alert("Selecione ambos os equipamentos.");
+                return;
+            }
+
+            const payload = {
+                idModulo: parseInt(idModulo),
+                idAltoFalante: parseInt(idAltoFalante)
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/match/check`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                const dadosResposta = await response.json();
+                document.getElementById("resultado-box").style.display = "block";
+                document.getElementById("resTitulo").innerText = dadosResposta.resultado;
+                document.getElementById("resDescricao").innerText = dadosResposta.descricao;
+            } catch (error) {
+                alert("Erro ao calcular.");
+            }
+        }
+
+        document.getElementById("btnCalcular").addEventListener("click", calcularMatch);
+        window.onload = carregarComponentes;
+    </script>
+</body>
+</html>

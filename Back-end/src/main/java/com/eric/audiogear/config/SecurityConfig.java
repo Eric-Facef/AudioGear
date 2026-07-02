@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -39,13 +38,18 @@ public class SecurityConfig {
                         // Libera requisições OPTIONS preliminares feitas pelo navegador
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // Libera endpoints de autenticação públicos (com e sem prefixo /api)
-                        .requestMatchers("/auth/**", "/api/auth/**").permitAll()
+                        // ⚠️ CORRIGIDO: antes "/auth/**" liberava TODAS as rotas de auth sem
+                        // login (cadastrar, deletar, listar usuários). Agora só o login fica público.
+                        .requestMatchers(HttpMethod.POST, "/auth/login", "/api/auth/login").permitAll()
+
+                        // Libera a rota de logs para tratamento manual de autorização no Controller
+                        .requestMatchers("/api/logs/**").permitAll()
 
                         // Libera consultas do catálogo (GET) para visitantes
                         .requestMatchers(HttpMethod.GET, "/api/componentes/**", "/componentes/**").permitAll()
 
-                        // Qualquer outra requisição (POST para salvar, DELETE, PUT) EXIGE o Token JWT
+                        // Qualquer outra requisição (cadastrar/deletar/listar usuários,
+                        // POST/PUT/DELETE de componentes, etc.) EXIGE o Token JWT
                         .anyRequest().authenticated()
                 )
                 // Injeta o nosso filtro customizado antes do processador de utilizador/senha padrão do Spring
@@ -56,6 +60,8 @@ public class SecurityConfig {
 
     // ==========================================================================
     // 🌍 CONFIGURAÇÃO GLOBAL DE CORS - EVITA BLOQUEIOS ENTRE FRONT E BACKEND
+    // Esta é a ÚNICA fonte de configuração de CORS da aplicação.
+    // Não usar @CrossOrigin nos Controllers para evitar conflito/duplicidade.
     // ==========================================================================
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

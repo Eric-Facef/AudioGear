@@ -2,10 +2,11 @@ package com.eric.audiogear.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import jakarta.annotation.PostConstruct;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -13,13 +14,20 @@ import java.util.Date;
 @Service
 public class TokenService {
 
-    // Chave fixa em Base64 — tokens continuam válidos mesmo após reiniciar o servidor
-    private final Key key = Keys.hmacShaKeyFor(
-            Base64.getDecoder().decode("dUd3UEF1ZGlvR2VhckNoYXZlU2VjcmV0YUZpeGEyMDI0IQ==")
-    );
+    // ⚠️ CORRIGIDO: a chave não fica mais hardcoded no código-fonte.
+    // Ela agora vem do application-*.properties / variável de ambiente JWT_SECRET.
+    @Value("${jwt.secret}")
+    private String secret;
+
+    private Key key;
 
     // O token vai expirar em 2 horas (em milissegundos)
     private final long expirationTime = 7200000;
+
+    @PostConstruct
+    public void init() {
+        this.key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret));
+    }
 
     public String gerarToken(String username) {
         return Jwts.builder().setSubject(username).setIssuedAt(new Date()).

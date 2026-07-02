@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/match")
-@CrossOrigin(origins = "*")
+// CORS já é tratado de forma global e única em SecurityConfig.corsConfigurationSource()
 public class MatchController {
 
     private final AudioService audioService;
