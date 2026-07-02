@@ -1,8 +1,8 @@
-//const API_URL = "https://audiogear.onrender.com/api/componentes"; // PROD
-//const API_AUTH_URL = "https://audiogear.onrender.com/auth"; // PROD
+const API_URL = "https://audiogear.onrender.com/api/componentes"; // PROD
+const API_AUTH_URL = "https://audiogear.onrender.com/auth"; // PROD
 
-const API_URL = "http://localhost:8080/api/componentes"; // LOCAL
-const API_AUTH_URL = "http://localhost:8080/auth"; // LOCAL
+//const API_URL = "http://localhost:8080/api/componentes"; // LOCAL
+//const API_AUTH_URL = "http://localhost:8080/auth"; // LOCAL
 
 //const API_URL = "https://localhost.run/docs/forever-free/"; // LOCALHOST 
 //const API_AUTH_URL = "https://770310c2d9f11a.lhr.life"; // LOCALHOST
